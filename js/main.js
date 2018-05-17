@@ -1,10 +1,9 @@
-var markers = [];
-var test_positions = [[51.219115, 4.420655], [51.218839, 4.421601]];
+var intersections = [];
 
 $(function(){
   var map = L.map('map',{
     scrollWheelZoom : false
-  }).setView([51.219008, 4.421053], 17);
+  }).setView([51.2120370, 4.3972438], 17);
 
   //Add tile layer from Mapbox
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -19,45 +18,24 @@ $(function(){
   xmlHttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       var catalog = JSON.parse(this.responseText);
-      for (var sensor of catalog["@graph"]){
-        var new_marker = new TrafficLightMarker(sensor["@id"], [sensor.latitude, sensor.longitude]);
-        markers.push(new_marker);
-        new_marker.add_to_map(map);
+
+      for (var maps of catalog["@graph"]){
+        for(var intersection of maps.map.intersections){
+          console.log(intersection)
+          var new_intersection = new Intersection(intersection.id.id, intersection.name, intersection.laneSet, intersection.url);
+          intersections.push(new_intersection);
+          new_intersection.add_to_map(map);
+        }
       }
     }
   };
 
+  var lane_info_panel = document.createElement("div")
+  lane_info_panel.id = "lane_info_panel"
+  lane_info_panel.innerHTML = "<h4>Lane status:</h4> <p id='lane_status'>Hover over a lane.</p>"
+
+  document.getElementById("map").appendChild(lane_info_panel)
+
   xmlHttp.open( "GET", 'https://localhost:3000', false ); // false for synchronous request
   xmlHttp.send( null );
-
-  /*var source1 = new EventSource('https://localhost:3000?uri=' + 'http://data.observer.be/verkeerslichten/1');
-  source1.onmessage = function(message) {
-    data = JSON.parse(message.data)
-
-    if(!markers){
-
-      //Initiate a marker for every traffic light
-      markers = [];
-      for( var light of data["@graph"] ){
-        new_marker = new TrafficLightMarker(light["@id"], light.count, test_positions.pop(), light.color);
-        markers.push(new_marker);
-        new_marker.add_to_map(map);
-      }
-
-    } else {
-
-      //Update every traffic light
-      for( var light of data["@graph"] ){
-        for( var marker of markers ){
-          if( marker.id == light["@id"] ){
-
-            marker.color = light.color;
-            marker.count = light.count;
-
-          }
-        }
-      }
-
-    }
-  };*/
 });

@@ -1,12 +1,26 @@
-.traffic-light{
-    border-radius: 50%;
-    /*padding: 4px;*/
-    /*border: solid 3px;*/
-    margin: -25%;
+#lane_info_panel{
+  position: relative;
+  width: 200px;
+  float: right;
+  background-color: rgba(254, 254, 254, .7);
+  text-align: center;
+
+  border-bottom-left-radius: 10px;
+  border-left: solid grey 2px;
+  border-bottom: solid grey 2px;
+
 }
 
-.traffic-light p{
-    padding: 0;
-    margin: 0;
-    text-align: center;
+.leaflet-pane{
+  z-index: 0
+}
+
+#lane_info_panel h4{
+  margin: 3px 0;
+  font-weight: 600;
+}
+
+#lane_info_panel p{
+  margin: 3px 0;
+  text-align: center;
 }
